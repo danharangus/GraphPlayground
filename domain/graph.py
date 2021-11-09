@@ -5,8 +5,8 @@ class Graph:
     def __init__(self, nodes, edges):
         """
         Creates a new edge between nodes x and nodes y
-        :param x: Node list
-        :param y: Edge list
+        :param nodes: Node list
+        :param edges: Edge list
         """
         self.__nodes = nodes
         self.__edges = edges
@@ -25,5 +25,5 @@ class Graph:
 
     @edges.setter
     def edges(self, new_edges):
-        self.__edges= deepcopy(new_edges)
+        self.__edges = deepcopy(new_edges)
 

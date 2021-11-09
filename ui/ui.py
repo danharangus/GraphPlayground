@@ -3,6 +3,7 @@ from service.nodeService import NodeService
 from service.edgeService import EdgeService
 from domain.node import Node
 from domain.edge import Edge
+import math
 
 
 class UI:
@@ -34,13 +35,32 @@ class UI:
         screen.blit(node_text, (node.x - 15, node.y - 35))
         pygame.display.update()
 
+    def check_collision(self, point, rect):
+        x1, y1, w, h = rect
+        x2, y2 = x1 + w + 35, y1 + h + 35
+        x1 -= 35
+        y1 -= 35
+        x, y = point
+        if x1 < x < x2:
+            if y1 < y < y2:
+                return True
+        return False
+
     def draw_edge(self, edge, screen, font):
-        node1 = edge.x
-        node2 = edge.y
+        n1 = edge.x
+        n2 = edge.y
+        vx = (n1.x - n2.x)
+        vy = (n1.y - n2.y)
+        ux = vx / (math.sqrt(vx * vx + vy * vy))
+        uy = vy / (math.sqrt(vx * vx + vy * vy))
+        xf1 = float(n1.x - 46 * ux)
+        xf2 = float(n2.x + 46 * ux)
+        yf1 = float(n1.y - 46 * uy)
+        yf2 = float(n2.y + 46 * uy)
         color = edge.color
         pygame.draw.line(screen, color,
-                         (node1.x, node1.y),
-                         (node2.x, node2.y), 2)
+                         (xf1, yf1),
+                         (xf2, yf2), 2)
         pygame.display.update()
 
     def draw_nodes(self, screen, font):
@@ -80,6 +100,9 @@ class UI:
 
         counter = 0
         source_node = None
+        selected_rect = None
+        offset_x = 0
+        offset_y = 0
         dest_node = None
         while loop:
             try:
@@ -90,22 +113,29 @@ class UI:
                         pos = self.get_pos()
                         click_on_node = False
                         clicked_node = -1
-
+                        collision = False
                         for node_rect in self.__node_rectangles:
                             rect = node_rect[1]
                             if self.point_in_rect(pos, rect):
                                 print("Click on node", node_rect[0])
                                 click_on_node = True
                                 clicked_node = node_rect[0]
+                                selected_rect = node_rect[1]
+                                offset_x = selected_rect.x - pos[0]
+                                offset_y = selected_rect.y - pos[1]
+
+                            if self.check_collision(pos, rect):
+                                collision = True
 
                         if event.button == 1:
                             if not click_on_node:
-                                new_node = Node(counter, pos[0], pos[1], self.__WHITE)
-                                self.__node_service.insert_node(new_node)
-                                self.draw_nodes(screen, font)
-                                counter += 1
-                                source_node = None
-                                dest_node = None
+                                if not collision:
+                                    new_node = Node(counter, pos[0], pos[1], self.__WHITE)
+                                    self.__node_service.insert_node(new_node)
+                                    self.draw_nodes(screen, font)
+                                    counter += 1
+                                    source_node = None
+                                    dest_node = None
                             else:
                                 if source_node is None:
                                     for node in self.__node_service.node_list:
@@ -116,14 +146,27 @@ class UI:
                                         if node.index == clicked_node:
                                             dest_node = node
 
-                                    new_edge = Edge(source_node, dest_node, self.__WHITE, False)
-                                    if self.validate_edge(new_edge):
-                                        self.__edge_service.insert_edge(new_edge)
-                                        self.draw_edges(screen, font)
+                                    if source_node != dest_node:
+                                        new_edge = Edge(source_node, dest_node, self.__WHITE, False)
+                                        if self.validate_edge(new_edge):
+                                            self.__edge_service.insert_edge(new_edge)
+                                            self.draw_edges(screen, font)
 
                                     source_node = None
                                     dest_node = None
-
+                    elif event.type == pygame.MOUSEBUTTONUP:
+                        selected_rect = None
+                    elif event.type == pygame.MOUSEMOTION:
+                        if selected_rect is not None and source_node is not None:
+                            mouse_x, mouse_y = event.pos
+                            selected_rect.x = mouse_x + offset_x
+                            selected_rect.y = mouse_y + offset_y
+                            source_node.x = selected_rect.x
+                            source_node.y = selected_rect.y
+                            screen.fill(self.__BLACK)
+                            self.draw_nodes(screen, font)
+                            self.draw_edges(screen, font)
+                            pygame.display.flip()
             except Exception as e:
                 print(e)
                 pygame.quit()
