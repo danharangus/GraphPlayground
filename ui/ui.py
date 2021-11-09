@@ -164,6 +164,10 @@ class UI:
                             if click:
                                 if source_node is None:
                                     source_node = clicked_node
+                                    source_node.color = self.__BLUE
+                                    self.draw_graph(surface, font, canvas_rect)
+                                    screen.blit(surface, (0, 0))
+                                    pygame.display.flip()
                                 else:
                                     if source_node != clicked_node:
                                         new_edge = Edge(source_node, clicked_node, self.__WHITE, False)
@@ -171,6 +175,10 @@ class UI:
                                         self.draw_graph(surface, font, canvas_rect)
                                         screen.blit(surface, (0, 0))
                                         pygame.display.flip()
+                                    source_node.color = self.__WHITE
+                                    self.draw_graph(surface, font, canvas_rect)
+                                    screen.blit(surface, (0, 0))
+                                    pygame.display.flip()
                                     clicked_node = None
                                     source_node = None
                             elif not collision:
@@ -183,9 +191,17 @@ class UI:
                                         pygame.display.flip()
                                         counter += 1
                                     else:
+                                        source_node.color = self.__WHITE
+                                        self.draw_graph(surface, font, canvas_rect)
+                                        screen.blit(surface, (0, 0))
+                                        pygame.display.flip()
                                         source_node = None
                                         clicked_node = None
                                 else:
+                                    source_node.color = self.__WHITE
+                                    self.draw_graph(surface, font, canvas_rect)
+                                    screen.blit(surface, (0, 0))
+                                    pygame.display.flip()
                                     clicked_node = None
                                     source_node = None
                         elif event.button == 3:
