@@ -1,6 +1,7 @@
 from domain.node import Node
 from copy import deepcopy
 
+
 class NodeService:
     def __init__(self):
         self.__node_list = []

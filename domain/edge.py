@@ -1,5 +1,5 @@
 class Edge:
-    def __init__(self, x, y, color):
+    def __init__(self, x, y, color, directed):
         """
         Creates a new edge between nodes x and nodes y
         :param x: Node
@@ -9,6 +9,7 @@ class Edge:
         self.__x = x
         self.__y = y
         self.__color = color
+        self.__directed = directed
 
     @property
     def x(self):
@@ -33,6 +34,14 @@ class Edge:
     @color.setter
     def color(self, new_color):
         self.__color = new_color
+
+    @property
+    def directed(self):
+        return self.__directed
+
+    @directed.setter
+    def directed(self, new_directed):
+        self.__directed = new_directed
 
     def __str__(self):
         return str(self.x) + "--->" + str(self.y) + " || Color: " + str(self.__color)

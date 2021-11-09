@@ -5,9 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="231fb3e9-4654-42b4-970d-aecdb1cb5da7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/domain/edge.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/domain/graph.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/edgeService.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/graphService.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/edge.py" beforeDir="false" afterPath="$PROJECT_DIR$/domain/edge.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/nodeService.py" beforeDir="false" afterPath="$PROJECT_DIR$/service/nodeService.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui/ui.py" beforeDir="false" afterPath="$PROJECT_DIR$/ui/ui.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -27,7 +30,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="preferences.editor" />
+    <property name="settings.editor.selected.configurable" value="preferences.fileTypes" />
   </component>
   <component name="RunManager" selected="Python.ui">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
