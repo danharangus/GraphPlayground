@@ -2,6 +2,7 @@ import pygame
 from service.nodeService import NodeService
 from domain.node import Node
 
+
 class UI:
     def __init__(self, node_serv):
         self.__node_service = node_serv
