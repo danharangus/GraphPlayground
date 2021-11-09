@@ -173,17 +173,7 @@ class UI:
                                         source_node = None
                                         dest_node = None
                             elif event.button == 3:
-                                if click_on_node:
-                                    if source_node is None:
-                                        for node in self.__node_service.node_list:
-                                            if node.index == clicked_node:
-                                                source_node = node
-                                    self.__node_service.remove_node(source_node)
-                                    print(self.__node_service.node_list)
-                                    screen.fill(self.__BLACK)
-                                    self.draw_nodes(screen, font)
-                                    source_node = None
-                                    print("removed")
+                                pass
                     elif event.type == pygame.MOUSEBUTTONUP:
                         pass
                     elif event.type == pygame.MOUSEMOTION:
