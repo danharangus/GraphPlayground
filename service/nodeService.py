@@ -16,3 +16,6 @@ class NodeService:
 
     def insert_node(self, new_node):
         self.__node_list.append(new_node)
+
+    def remove_node(self, node):
+        self.__node_list.remove(node)

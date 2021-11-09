@@ -44,4 +44,4 @@ class Edge:
         self.__directed = new_directed
 
     def __str__(self):
-        return str(self.x) + "--->" + str(self.y) + " || Color: " + str(self.__color)
+        return str(self.x.index) + "--->" + str(self.y.index) + " || Color: " + str(self.__color)
