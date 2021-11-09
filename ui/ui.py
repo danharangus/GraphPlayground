@@ -3,13 +3,13 @@ from service.nodeService import NodeService
 from service.edgeService import EdgeService
 from domain.node import Node
 from domain.edge import Edge
+from domain.graph import Graph
 import math
 
 
 class UI:
-    def __init__(self, node_serv, edge_serv):
-        self.__node_service = node_serv
-        self.__edge_service = edge_serv
+    def __init__(self):
+        self.__graph = Graph([], [])
         self.__BLACK = (0, 0, 0)
         self.__WHITE = (255, 255, 255)
         self.__BLUE = (0, 0, 255)
@@ -25,18 +25,20 @@ class UI:
         return pos
 
     def print_nodes(self):
-        for node in self.__node_service.node_list:
+        for node in self.__graph.nodes:
             print(node)
         print("**************************")
 
     def print_edges(self):
-        for edge in self.__edge_service.edge_list:
+        for edge in self.__graph.edges:
             print(edge)
         print("-----------------------------")
 
     def draw_node(self, node, screen, font):
         rect = pygame.draw.circle(screen, node.color, (node.x, node.y), 40, width=5)
-        self.__node_rectangles.append((node.index, rect))
+        for n in self.__graph.nodes:
+            if n.index == node.index:
+                n.rect = rect
         node_text = font.render(str(node.index), True, node.color)
         if node.index < 10:
             screen.blit(node_text, (node.x - 11, node.y - 28))
@@ -47,10 +49,7 @@ class UI:
         pygame.display.update()
 
     def draw_nodes(self, screen, font):
-        self.__node_rectangles.clear()
-        if len(self.__node_service.node_list) == 0:
-            screen.fill(self.__BLACK)
-        for node in self.__node_service.node_list:
+        for node in self.__graph.nodes:
             self.draw_node(node, screen, font)
         self.print_nodes()
 
@@ -83,9 +82,14 @@ class UI:
         pygame.display.update()
 
     def draw_edges(self, screen, font):
-        for edge in self.__edge_service.edge_list:
+        for edge in self.__graph.edges:
             self.draw_edge(edge, screen, font)
         self.print_edges()
+
+    def draw_graph(self, screen, font, canvas_rect):
+        screen.fill(self.__BLACK, canvas_rect)
+        self.draw_nodes(screen, font)
+        self.draw_edges(screen, font)
 
     def point_in_rect(self, point, rect):
         x1, y1, w, h = rect
@@ -97,7 +101,7 @@ class UI:
         return False
 
     def validate_edge(self, new_edge):
-        for edge in self.__edge_service.edge_list:
+        for edge in self.__graph.edges:
             if new_edge.x == edge.x and new_edge.y == edge.y:
                 return False
         return True
@@ -106,74 +110,92 @@ class UI:
         pygame.init()
         pygame.font.init()
         font = pygame.font.SysFont('Arial', 45)
-
         w = 1920
         h = 1080
         screen = pygame.display.set_mode((w, h))
-        pygame.display.set_caption("Graph Playground")
-        screen.fill(self.__BLACK)
-        taskbar = pygame.Rect(0, 0, w, 150)
-        sub1 = screen.subsurface(taskbar)
-        sub1.fill(self.__GREY)
+
+        surface = pygame.Surface((w, h))
+        taskbar_rect = pygame.Rect(0, 0, w, 200)
+        canvas_rect = pygame.Rect(0, 200, w, h - 200)
+
+        taskbar = surface.subsurface(taskbar_rect)
+        canvas = surface.subsurface(canvas_rect)
+
+        taskbar.fill(self.__GREY)
+        canvas.fill(self.__BLACK)
+
+        # draw player 1's view  to the top left corner
+        screen.blit(taskbar, (0, 0))
+        # player 2's view is in the top right corner
+        screen.blit(canvas, (0, 200))
+
         pygame.display.update()
-        loop = True
 
         counter = 0
+        loop = True
         source_node = None
-        selected_rect = None
-        offset_x = 0
-        offset_y = 0
-        dest_node = None
+        destination_node = None
         while loop:
             try:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         loop = False
-                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        pygame.quit()
+                    elif event.type == pygame.MOUSEBUTTONDOWN:
                         pos = self.get_pos()
-                        if pos[1] > 180:
-                            click_on_node = False
-                            clicked_node = -1
-                            collision = False
-                            for node_rect in self.__node_rectangles:
-                                rect = node_rect[1]
-                                if self.point_in_rect(pos, rect):
-                                    print("Click on node", node_rect[0])
-                                    click_on_node = True
-                                    clicked_node = node_rect[0]
 
-                                if self.check_collision(pos, rect):
+                        collision = False   # check collision
+                        for node in self.__graph.nodes:
+                            if node.rect is not None:
+                                if self.check_collision(pos, node.rect):
                                     collision = True
+                                    break
 
-                            if event.button == 1:
-                                if not click_on_node:
-                                    if not collision:
-                                        new_node = Node(counter, pos[0], pos[1], self.__WHITE)
-                                        self.__node_service.insert_node(new_node)
-                                        self.draw_nodes(screen, font)
-                                        counter += 1
-                                        source_node = None
-                                        dest_node = None
+                        clicked_node = None
+                        click = False
+                        for node in self.__graph.nodes:
+                            if node.rect is not None:
+                                if self.point_in_rect(pos, node.rect):
+                                    clicked_node = node
+                                    click = True
+                                    break
+
+                        if event.button == 1:
+                            if click:
+                                if source_node is None:
+                                    source_node = clicked_node
                                 else:
-                                    if source_node is None:
-                                        for node in self.__node_service.node_list:
-                                            if node.index == clicked_node:
-                                                source_node = node
+                                    if source_node != clicked_node:
+                                        new_edge = Edge(source_node, clicked_node, self.__WHITE, False)
+                                        self.__graph.insert_edge(new_edge)
+                                        self.draw_graph(surface, font, canvas_rect)
+                                        screen.blit(surface, (0, 0))
+                                        pygame.display.flip()
+                                    clicked_node = None
+                                    source_node = None
+                            elif not collision:
+                                if source_node is None:
+                                    if pos[1] > 235:
+                                        new_node = Node(counter, pos[0], pos[1], self.__WHITE)
+                                        self.__graph.insert_node(new_node)
+                                        self.draw_graph(surface, font, canvas_rect)
+                                        screen.blit(surface, (0, 0))
+                                        pygame.display.flip()
+                                        counter += 1
                                     else:
-                                        for node in self.__node_service.node_list:
-                                            if node.index == clicked_node:
-                                                dest_node = node
-
-                                        if source_node != dest_node:
-                                            new_edge = Edge(source_node, dest_node, self.__WHITE, False)
-                                            if self.validate_edge(new_edge):
-                                                self.__edge_service.insert_edge(new_edge)
-                                                self.draw_edges(screen, font)
-
                                         source_node = None
-                                        dest_node = None
-                            elif event.button == 3:
-                                pass
+                                        clicked_node = None
+                                else:
+                                    clicked_node = None
+                                    source_node = None
+                        elif event.button == 3:
+                            if click:
+                                self.__graph.remove_node(clicked_node)
+                                clicked_node = None
+                                self.draw_graph(surface, font, canvas_rect)
+                                screen.blit(surface, (0, 0))
+                                pygame.display.flip()
+
                     elif event.type == pygame.MOUSEBUTTONUP:
                         pass
                     elif event.type == pygame.MOUSEMOTION:
@@ -186,5 +208,5 @@ class UI:
 
 ns = NodeService()
 es = EdgeService()
-ui = UI(ns, es)
+ui = UI()
 ui.run()

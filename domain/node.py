@@ -1,15 +1,20 @@
+from copy import deepcopy
+
+
 class Node:
-    def __init__(self, index, x, y, color):
+    def __init__(self, index, x, y, color, rect=None):
         """
         Creates a new Node object
         :param x: x coordinate of the node (float)
         :param y: y coordinate of the node (float)
         :param color: RGB code of the node's color (tuple)
+        :param rect: Node Rect object
         """
         self.__index = index
         self.__x = x
         self.__y = y
         self.__color = color
+        self.__rect = rect
 
     @property
     def x(self):
@@ -42,6 +47,14 @@ class Node:
     @color.setter
     def color(self, new_color):
         self.__color = new_color
+
+    @property
+    def rect(self):
+        return self.__rect
+
+    @rect.setter
+    def rect(self, new_rect):
+        self.__rect = new_rect
 
     def __str__(self):
         return str(self.__index) +\

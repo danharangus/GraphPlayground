@@ -5,6 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="231fb3e9-4654-42b4-970d-aecdb1cb5da7" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/edge.py" beforeDir="false" afterPath="$PROJECT_DIR$/domain/edge.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/domain/graph.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/node.py" beforeDir="false" afterPath="$PROJECT_DIR$/domain/node.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui/ui.py" beforeDir="false" afterPath="$PROJECT_DIR$/ui/ui.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -27,6 +32,27 @@
     <property name="settings.editor.selected.configurable" value="preferences.fileTypes" />
   </component>
   <component name="RunManager" selected="Python.ui">
+    <configuration name="graph" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="GraphPlayground" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/domain" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/domain/graph.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="GraphPlayground" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -114,9 +140,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.ui" />
+        <item itemvalue="Python.graph" />
+        <item itemvalue="Python.main" />
         <item itemvalue="Python.test" />
         <item itemvalue="Python.node" />
-        <item itemvalue="Python.main" />
       </list>
     </recent_temporary>
   </component>
