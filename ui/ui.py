@@ -132,10 +132,11 @@ class UI:
         # draw canvas
         screen.blit(canvas, (0, 200))
 
+        button_text = font.render("Directed", True, self.__WHITE)
         directed_button = pygame.Rect(w / 17, h / 18,  w / 10, h / 20)
+
         pygame.draw.rect(screen, self.__BUTTON_NORMAL, directed_button)
-        text = font.render("Directed", True, self.__WHITE)
-        screen.blit(text, (w / 17 + 25, h / 18))
+        screen.blit(button_text, (w / 17 + 25, h / 18))
 
         pygame.display.update()
 
@@ -144,6 +145,9 @@ class UI:
         source_node = None
         destination_node = None
         while loop:
+            pygame.draw.rect(screen, self.__BUTTON_NORMAL, directed_button)
+            screen.blit(button_text, (w / 17 + 25, h / 18))
+            pygame.display.flip()
             try:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -169,6 +173,9 @@ class UI:
                                     break
 
                         if event.button == 1:
+                            if w/17 <= float(pos[0]) <= w / 17 + w / 10 and h/ 18 <= float(pos[1]) <= h / 18 + h / 20:
+                                print("Button clicked")
+                                continue
                             if click:
                                 if source_node is None:
                                     source_node = clicked_node
@@ -212,7 +219,6 @@ class UI:
                                 self.draw_graph(surface, font, canvas_rect)
                                 screen.blit(surface, (0, 0))
                                 pygame.display.flip()
-
                     elif event.type == pygame.MOUSEBUTTONUP:
                         pass
                     elif event.type == pygame.MOUSEMOTION:
