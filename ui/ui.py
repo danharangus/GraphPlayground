@@ -7,6 +7,7 @@ from domain.graph import Graph
 import math
 
 
+
 class UI:
     def __init__(self):
         self.__graph = Graph([], [])
@@ -14,6 +15,8 @@ class UI:
         self.__WHITE = (255, 255, 255)
         self.__BLUE = (0, 0, 255)
         self.__GREY = (134, 140, 150)
+        self.__BUTTON_SELECTED = (170, 170, 170)
+        self.__BUTTON_NORMAL = (0, 102, 204)
         self.__node_rectangles = []
 
     def get_pos(self):
@@ -124,10 +127,15 @@ class UI:
         taskbar.fill(self.__GREY)
         canvas.fill(self.__BLACK)
 
-        # draw player 1's view  to the top left corner
+        # draw taskbar
         screen.blit(taskbar, (0, 0))
-        # player 2's view is in the top right corner
+        # draw canvas
         screen.blit(canvas, (0, 200))
+
+        directed_button = pygame.Rect(w / 17, h / 18,  w / 10, h / 20)
+        pygame.draw.rect(screen, self.__BUTTON_NORMAL, directed_button)
+        text = font.render("Directed", True, self.__WHITE)
+        screen.blit(text, (w / 17 + 25, h / 18))
 
         pygame.display.update()
 
@@ -190,13 +198,6 @@ class UI:
                                         screen.blit(surface, (0, 0))
                                         pygame.display.flip()
                                         counter += 1
-                                    else:
-                                        source_node.color = self.__WHITE
-                                        self.draw_graph(surface, font, canvas_rect)
-                                        screen.blit(surface, (0, 0))
-                                        pygame.display.flip()
-                                        source_node = None
-                                        clicked_node = None
                                 else:
                                     source_node.color = self.__WHITE
                                     self.draw_graph(surface, font, canvas_rect)
