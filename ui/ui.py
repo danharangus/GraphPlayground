@@ -44,11 +44,11 @@ class UI:
                 n.rect = rect
         node_text = font.render(str(node.index), True, node.color)
         if node.index < 10:
-            screen.blit(node_text, (node.x - 11, node.y - 28))
+            screen.blit(node_text, (node.x - 8, node.y - 20))
         elif node.index < 100:
-            screen.blit(node_text, (node.x - 22, node.y - 28))
+            screen.blit(node_text, (node.x - 14, node.y - 20))
         else:
-            screen.blit(node_text, (node.x - 33, node.y - 28))
+            screen.blit(node_text, (node.x - 20, node.y - 20))
         pygame.display.update()
 
     def draw_nodes(self, screen, font):
@@ -160,9 +160,9 @@ class UI:
     def run(self):
         pygame.init()
         pygame.font.init()
-        font = pygame.font.SysFont('Arial', 45)
-        w = 1920
-        h = 1080
+        font = pygame.font.SysFont('Arial', 30)
+        w = 1280
+        h = 780
         screen = pygame.display.set_mode((w, h))
 
         surface = pygame.Surface((w, h))
@@ -180,15 +180,21 @@ class UI:
         # draw canvas
         screen.blit(canvas, (0, 200))
 
-        button_message = "Directed"
+        directed_button_message = "Directed"
         is_directed = False
-        directed_button_position_w_ratio = 17
+        directed_button_position_text_w_ratio = 17
+        directed_button_position_text_h_ratio = 18
+        directed_button_position_w_ratio = 9
         directed_button_position_h_ratio = 18
-        button_text = font.render(button_message, True, self.__WHITE)
-        directed_button = pygame.Rect(w / directed_button_position_w_ratio, h / directed_button_position_h_ratio,
-                                      w / 9, h / 20)
+        directed_button_text_w_offset = 17
+        button_text = font.render(directed_button_message, True, self.__WHITE)
+        directed_button = pygame.Rect(w / directed_button_position_text_w_ratio,
+                                      h / directed_button_position_text_h_ratio,
+                                      w / directed_button_position_w_ratio,
+                                      h / directed_button_position_h_ratio)
         pygame.draw.rect(screen, self.__BUTTON_NORMAL, directed_button)
-        screen.blit(button_text, (w / directed_button_position_w_ratio + 25, h / directed_button_position_h_ratio))
+        screen.blit(button_text, (w / directed_button_position_text_w_ratio + directed_button_text_w_offset,
+                                  h / directed_button_position_text_h_ratio))
         pygame.display.update()
 
         counter = 0
@@ -197,7 +203,8 @@ class UI:
         destination_node = None
         while loop:
             pygame.draw.rect(screen, self.__BUTTON_NORMAL, directed_button)
-            screen.blit(button_text, (w / directed_button_position_w_ratio + 25, h / directed_button_position_h_ratio))
+            screen.blit(button_text, (w / directed_button_position_text_w_ratio + directed_button_text_w_offset,
+                                      h / directed_button_position_text_h_ratio))
             pygame.display.flip()
             try:
                 for event in pygame.event.get():
@@ -235,26 +242,28 @@ class UI:
                                         break
 
                         if event.button == 1:
-                            if w/17 <= float(pos[0]) <= w / directed_button_position_w_ratio + w / 10 and \
-                                    h / directed_button_position_h_ratio <= float(pos[1]) <= h / directed_button_position_h_ratio + h / 20:
+                            if w/17 <= float(pos[0]) <= w / directed_button_position_text_w_ratio + w / 10 and \
+                                    h / directed_button_position_text_h_ratio <= float(pos[1]) <= h / directed_button_position_text_h_ratio + h / 20:
                                 # Click on directed/undirected button
-                                if button_message == "Directed":
-                                    button_message = "Undirected"
+                                if directed_button_message == "Directed":
+                                    directed_button_message = "Undirected"
                                     is_directed = True
                                     for edge in self.__graph.edges:
                                         edge.directed = True
                                 else:
-                                    button_message = "Directed"
+                                    directed_button_message = "Directed"
                                     is_directed = False
                                     for edge in self.__graph.edges:
                                         edge.directed = False
                                 self.draw_graph(surface, font, canvas_rect)
                                 screen.blit(surface, (0, 0))
 
-                                button_text = font.render(button_message, True, self.__WHITE)
-                                directed_button = pygame.Rect(w / directed_button_position_w_ratio, h / directed_button_position_h_ratio, w / 9, h / 20)
+                                button_text = font.render(directed_button_message, True, self.__WHITE)
+                                directed_button = pygame.Rect(w / directed_button_position_text_w_ratio,
+                                                              h / directed_button_position_text_h_ratio, w / 9, h / 20)
                                 pygame.draw.rect(screen, self.__BUTTON_NORMAL, directed_button)
-                                screen.blit(button_text, (w / directed_button_position_w_ratio + 25, h / directed_button_position_h_ratio))
+                                screen.blit(button_text, (w / directed_button_position_text_w_ratio + directed_button_text_w_offset,
+                                                          h / directed_button_position_text_h_ratio))
                                 pygame.display.update()
                                 continue
                             if node_click:
