@@ -4,6 +4,7 @@ from service.edgeService import EdgeService
 from domain.node import Node
 from domain.edge import Edge
 from domain.graph import Graph
+from algorithms.kruskal import KruskalGraph
 import math
 
 
@@ -18,6 +19,24 @@ class UI:
         self.__BUTTON_SELECTED = (170, 170, 170)
         self.__BUTTON_NORMAL = (0, 102, 204)
         self.__node_rectangles = []
+
+    def get_mst(self, counter):
+        kruskal_graph = KruskalGraph(counter)
+        for edge in self.__graph.edges:
+            kruskal_graph.add_edge(edge.x.index, edge.y.index, edge.weight)
+        mst = kruskal_graph.get_mst()
+        for edge in self.__graph.edges:
+            for mst_edge in mst:
+                if edge.x.index == mst_edge[0] and edge.y.index == mst_edge[1]:
+                    edge.color = self.__BLUE
+
+
+    def get_weights_from_console(self):
+        for edge in self.__graph.edges:
+            weight = input(str(edge.x.index) + "-->" + str(edge.y.index))
+            weight = int(weight)
+            edge.weight = weight
+
 
     def get_pos(self):
         """
@@ -180,6 +199,49 @@ class UI:
         # draw canvas
         screen.blit(canvas, (0, 200))
 
+
+        """
+        MST
+        """
+        mst_button_message = "MST"
+        mst_button_position_text_w_ratio = 3
+        mst_button_position_text_h_ratio = 18
+        mst_button_position_w_ratio = 12
+        mst_button_position_h_ratio = 18
+        mst_button_text_w_offset = 17
+        mst_button_text = font.render(mst_button_message, True, self.__WHITE)
+        mst_button = pygame.Rect(w / mst_button_position_text_w_ratio,
+                                      h / mst_button_position_text_h_ratio,
+                                      w / mst_button_position_w_ratio,
+                                      h / mst_button_position_h_ratio)
+        # pygame.draw.rect(screen, self.__BUTTON_NORMAL, mst_button)
+        # screen.blit(mst_button_text, (w / mst_button_position_text_w_ratio + mst_button_text_w_offset,
+                                 # h / mst_button_position_text_h_ratio))
+
+
+        """
+        Weighted button
+        """
+        weighted_button_message = "Weighted"
+        is_weighted = False
+        weighted_button_position_text_w_ratio = 5
+        weighted_button_position_text_h_ratio = 18
+        weighted_button_position_w_ratio = 8
+        weighted_button_position_h_ratio = 18
+        weighted_button_text_w_offset = 17
+        weighted_button_text = font.render(weighted_button_message, True, self.__WHITE)
+        weighted_button = pygame.Rect(w / weighted_button_position_text_w_ratio,
+                                      h / weighted_button_position_text_h_ratio,
+                                      w / weighted_button_position_w_ratio,
+                                      h / weighted_button_position_h_ratio)
+        pygame.draw.rect(screen, self.__BUTTON_NORMAL, weighted_button)
+        screen.blit(weighted_button_text, (w / weighted_button_position_text_w_ratio + weighted_button_text_w_offset,
+                                  h / weighted_button_position_text_h_ratio))
+
+
+        """
+        Directed button
+        """
         directed_button_message = "Directed"
         is_directed = False
         directed_button_position_text_w_ratio = 17
@@ -187,13 +249,13 @@ class UI:
         directed_button_position_w_ratio = 9
         directed_button_position_h_ratio = 18
         directed_button_text_w_offset = 17
-        button_text = font.render(directed_button_message, True, self.__WHITE)
+        directed_button_text = font.render(directed_button_message, True, self.__WHITE)
         directed_button = pygame.Rect(w / directed_button_position_text_w_ratio,
                                       h / directed_button_position_text_h_ratio,
                                       w / directed_button_position_w_ratio,
                                       h / directed_button_position_h_ratio)
         pygame.draw.rect(screen, self.__BUTTON_NORMAL, directed_button)
-        screen.blit(button_text, (w / directed_button_position_text_w_ratio + directed_button_text_w_offset,
+        screen.blit(directed_button_text, (w / directed_button_position_text_w_ratio + directed_button_text_w_offset,
                                   h / directed_button_position_text_h_ratio))
         pygame.display.update()
 
@@ -203,8 +265,18 @@ class UI:
         destination_node = None
         while loop:
             pygame.draw.rect(screen, self.__BUTTON_NORMAL, directed_button)
-            screen.blit(button_text, (w / directed_button_position_text_w_ratio + directed_button_text_w_offset,
+            screen.blit(directed_button_text, (w / directed_button_position_text_w_ratio + directed_button_text_w_offset,
                                       h / directed_button_position_text_h_ratio))
+
+            pygame.draw.rect(screen, self.__BUTTON_NORMAL, weighted_button)
+            screen.blit(weighted_button_text, (w / weighted_button_position_text_w_ratio +
+                                                   weighted_button_text_w_offset,
+                                                   h / weighted_button_position_text_h_ratio))
+            if is_weighted and not is_directed:
+                pygame.draw.rect(screen, self.__BUTTON_NORMAL, mst_button)
+                screen.blit(mst_button_text, (w / mst_button_position_text_w_ratio + mst_button_text_w_offset,
+                                              h / mst_button_position_text_h_ratio))
+
             pygame.display.flip()
             try:
                 for event in pygame.event.get():
@@ -242,8 +314,10 @@ class UI:
                                         break
 
                         if event.button == 1:
-                            if w/17 <= float(pos[0]) <= w / directed_button_position_text_w_ratio + w / 10 and \
-                                    h / directed_button_position_text_h_ratio <= float(pos[1]) <= h / directed_button_position_text_h_ratio + h / 20:
+                            if w/directed_button_position_w_ratio <= float(pos[0])\
+                                    <= w / directed_button_position_text_w_ratio + w / 10 and \
+                                    h / directed_button_position_text_h_ratio \
+                                    <= float(pos[1]) <= h / directed_button_position_text_h_ratio + h / 20:
                                 # Click on directed/undirected button
                                 if directed_button_message == "Directed":
                                     directed_button_message = "Undirected"
@@ -258,13 +332,42 @@ class UI:
                                 self.draw_graph(surface, font, canvas_rect)
                                 screen.blit(surface, (0, 0))
 
-                                button_text = font.render(directed_button_message, True, self.__WHITE)
-                                directed_button = pygame.Rect(w / directed_button_position_text_w_ratio,
-                                                              h / directed_button_position_text_h_ratio, w / 9, h / 20)
+                                directed_button_text = font.render(directed_button_message, True, self.__WHITE)
                                 pygame.draw.rect(screen, self.__BUTTON_NORMAL, directed_button)
-                                screen.blit(button_text, (w / directed_button_position_text_w_ratio + directed_button_text_w_offset,
+                                screen.blit(directed_button_text, (w / directed_button_position_text_w_ratio +
+                                                                   directed_button_text_w_offset,
                                                           h / directed_button_position_text_h_ratio))
+
                                 pygame.display.update()
+                                continue
+                            if w/weighted_button_position_w_ratio <= float(pos[0]) \
+                                    <= w / weighted_button_position_text_w_ratio + w / 10 and \
+                                    h / weighted_button_position_text_h_ratio \
+                                    <= float(pos[1]) <= h / weighted_button_position_text_h_ratio + \
+                                    h / directed_button_position_h_ratio:
+                                # Click on weighted/unweighted button
+                                if weighted_button_message == "Weighted":
+                                    weighted_button_message = "Unweighted"
+                                    is_weighted = True
+                                    self.get_weights_from_console()
+
+                                else:
+                                    weighted_button_message = "Weighted"
+                                    is_weighted = False
+                                weighted_button_text = font.render(weighted_button_message, True, self.__WHITE)
+                                self.draw_graph(surface, font, canvas_rect)
+                                continue
+                            if w / mst_button_position_w_ratio <= float(pos[0]) \
+                                    <= w / mst_button_position_text_w_ratio + w / 10 and \
+                                    h / mst_button_position_text_h_ratio \
+                                    <= float(pos[1]) <= h / mst_button_position_text_h_ratio + \
+                                    h / directed_button_position_h_ratio and not is_directed and is_weighted:
+                                self.get_mst(counter)
+                                self.draw_graph(surface, font, canvas_rect)
+                                screen.blit(surface, (0, 0))
+                                pygame.display.update()
+                                # Click on MST button
+                            
                                 continue
                             if node_click:
                                 if source_node is None:

@@ -13,6 +13,7 @@ class Edge:
         self.__color = color
         self.__directed = directed
         self.__rect = rect
+        self.__weight = 0
 
     @property
     def x(self):
@@ -53,6 +54,15 @@ class Edge:
     @rect.setter
     def rect(self, new_rect):
         self.__rect = new_rect
+
+    @property
+    def weight(self):
+        return self.__weight
+
+    @weight.setter
+    def weight(self, new_weight):
+        self.__weight = new_weight
+
 
     def __str__(self):
         return str(self.x.index) + "--->" + str(self.y.index) + " || Color: " + str(self.__color)
